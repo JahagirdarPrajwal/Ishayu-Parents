@@ -6,7 +6,7 @@ import { StripMarquee } from "@/components/marquee/StripMarquee";
 import { FounderSection } from "@/components/founder/FounderSection";
 import { HowItsMade } from "@/components/process/HowItsMade";
 import { StorySection } from "@/components/story/StorySection";
-import { ProductGrid } from "@/components/products/ProductGrid";
+import { MobileShowcase } from "@/components/products/MobileShowcase";
 import { HorizontalShowcase } from "@/components/products/HorizontalShowcase";
 import { IngredientsSection } from "@/components/ingredients/IngredientsSection";
 import { NutritionTable } from "@/components/nutrition/NutritionTable";
@@ -38,7 +38,7 @@ export default function Home() {
         <HowItsMade />
         <StorySection />
         <HorizontalShowcase />
-        <ProductGrid />
+        <MobileShowcase />
         <IngredientsSection />
         <NutritionTable />
         <SustainabilitySection />

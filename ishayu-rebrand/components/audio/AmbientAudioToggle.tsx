@@ -23,7 +23,15 @@ import { COPY } from "@/lib/voice";
  */
 
 const AUDIO_URL = "/audio/ambient.mp3";
-const TARGET_GAIN = 0.3;
+// Master target gain when audio is on. We were at 0.3 which sounded fine on
+// laptop speakers but was inaudible on mobile. 0.85 gets us close to unity
+// without risking clipping on already-loud sources.
+const TARGET_GAIN = 0.85;
+// Floor for the scroll-driven fade — even deep in the page the ambient bed
+// stays present (dead-silent ambient feels broken on mobile).
+const SCROLL_FLOOR = 0.45;
+// How many viewport heights of scroll the fade spans. Larger = more gradual.
+const SCROLL_FADE_SPAN = 4;
 const FADE_IN_SEC = 1.2;
 const FADE_OUT_SEC = 0.6;
 
@@ -154,14 +162,15 @@ export function AmbientAudioToggle() {
     };
   }, []);
 
-  // Fade out as you scroll past the hero
+  // Fade gently as you scroll past the hero, but never to silence — once
+  // the user has explicitly turned audio on it should remain present
+  // throughout the page.
   useEffect(() => {
     if (!audioOn || reduced) return;
     const onScroll = () => {
-      const ratio = Math.max(
-        0,
-        1 - window.scrollY / Math.max(window.innerHeight, 1)
-      );
+      const span = Math.max(window.innerHeight, 1) * SCROLL_FADE_SPAN;
+      const linear = 1 - window.scrollY / span;
+      const ratio = Math.max(SCROLL_FLOOR, Math.min(1, linear));
       const target = TARGET_GAIN * ratio;
       targetVolRef.current = target;
       const e = engineRef.current;
