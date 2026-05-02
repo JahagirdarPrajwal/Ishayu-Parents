@@ -1,0 +1,15 @@
+{
+  "name": "Ishayu — protein & energy bars",
+  "short_name": "Ishayu",
+  "description": "A demo brand refresh for Ishayu protein and energy bars.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#F4EFE6",
+  "theme_color": "#F4EFE6",
+  "icons": [
+    { "src": "/icon", "type": "image/png", "sizes": "64x64", "purpose": "any" },
+    { "src": "/apple-icon", "type": "image/png", "sizes": "180x180", "purpose": "any" }
+  ]
+}

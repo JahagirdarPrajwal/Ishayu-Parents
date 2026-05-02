@@ -1,0 +1,71 @@
+# =============================================================================
+# Root .gitignore for the Ishayu workspace.
+# The actual Next.js app lives in `ishayu-rebrand/`. This file is the single
+# source of truth for what's excluded from the repo.
+# =============================================================================
+
+# ---------- Node / Next.js (inside ishayu-rebrand/) -------------------------
+**/node_modules/
+**/.next/
+**/.turbo/
+**/out/
+**/build/
+**/coverage/
+**/.pnp
+**/.pnp.*
+**/.yarn/*
+!**/.yarn/patches
+!**/.yarn/plugins
+!**/.yarn/releases
+!**/.yarn/versions
+
+# ---------- Logs ------------------------------------------------------------
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# ---------- Env files (never commit secrets) -------------------------------
+.env
+.env.*
+!.env.example
+
+# ---------- TypeScript / build artefacts -----------------------------------
+*.tsbuildinfo
+next-env.d.ts
+
+# ---------- OS / editor cruft ----------------------------------------------
+.DS_Store
+Thumbs.db
+ehthumbs.db
+desktop.ini
+*.swp
+*.swo
+.idea/
+.vscode/
+
+# ---------- Vercel CLI ------------------------------------------------------
+.vercel
+
+# ---------- Heavy raw source assets ----------------------------------------
+# These are kept LOCAL only — they are inputs for the Python/Node build
+# scripts, not shipped to production. The processed outputs live in
+# ishayu-rebrand/public/ which IS committed.
+ishayu-rebrand/assets/audio/ambient-source.*
+ishayu-rebrand/assets/audio/*.wav
+
+# Original Word docs (brand copy decks). Kept local; copy already extracted
+# into lib/voice.ts / lib/products.ts.
+*.docx
+
+# ---------- Python ----------------------------------------------------------
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+
+# ---------- Misc -----------------------------------------------------------
+*.pem
+.cache/

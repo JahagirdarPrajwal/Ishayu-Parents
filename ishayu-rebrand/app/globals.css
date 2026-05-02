@@ -1,0 +1,253 @@
+@import "tailwindcss";
+
+/* ============================================================
+   Ishayu — design tokens
+   Day mode (default) + Dusk mode + per-bar signature palette.
+   ============================================================ */
+
+@theme {
+  /* --- Brand neutrals (day) --- */
+  --color-bg: #f4efe6;
+  --color-bg-alt: #eae3d2;
+  --color-ink: #1f2a1b;
+  --color-moss: #4a6a3a;
+  --color-sage: #8aa174;
+  --color-olive: #c7c58a;
+  --color-butter: #f4d27a;
+  --color-terracotta: #c26a4a;
+  --color-petal: #f2c6c0;
+
+  /* --- Per-bar signatures (read from real pack photography) --- */
+  --color-bar-moringa-light: #b7ce63;
+  --color-bar-moringa-dark: #3d5a2a;
+  --color-bar-peanut-light: #e2c492;
+  --color-bar-peanut-dark: #b98a4f;
+  --color-bar-cocoa-light: #b68a66;
+  --color-bar-cocoa-dark: #3e2418;
+  --color-bar-beet-light: #c49096;
+  --color-bar-beet-dark: #6e1f26;
+  --color-bar-ragi-light: #c9a36f;
+  --color-bar-ragi-dark: #3a2a20;
+
+  /* --- Type --- */
+  --font-display: var(--font-fraunces);
+  --font-pack: var(--font-anton);
+  --font-body: var(--font-inter);
+  --font-mono: var(--font-jetbrains);
+
+  /* --- Motion --- */
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out-sine: cubic-bezier(0.45, 0.05, 0.55, 0.95);
+  --ease-out-back: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  /* --- Layout --- */
+  --shell-max: 1440px;
+  --gutter-x: clamp(1rem, 4vw, 3rem);
+}
+
+/* ============================================================
+   Dusk mode (manual via [data-theme="dusk"], or system dark)
+   Bar signature colors do NOT change — they belong to the product.
+   ============================================================ */
+
+[data-theme="dusk"] {
+  --color-bg: #14180f;
+  --color-bg-alt: #1c2317;
+  --color-ink: #efe7d4;
+  --color-moss: #8aa174;
+  --color-sage: #b7ce63;
+  --color-olive: #6a7a3a;
+  --color-butter: #d9b25b;
+  --color-terracotta: #c26a4a;
+  --color-petal: #c49096;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="day"]) {
+    --color-bg: #14180f;
+    --color-bg-alt: #1c2317;
+    --color-ink: #efe7d4;
+    --color-moss: #8aa174;
+    --color-sage: #b7ce63;
+    --color-olive: #6a7a3a;
+    --color-butter: #d9b25b;
+    --color-terracotta: #c26a4a;
+    --color-petal: #c49096;
+  }
+}
+
+/* ============================================================
+   Base
+   ============================================================ */
+
+@layer base {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    background: var(--color-bg);
+    color: var(--color-ink);
+    overscroll-behavior-y: none;
+  }
+
+  body {
+    background: var(--color-bg);
+    color: var(--color-ink);
+    font-family: var(--font-body), Inter, system-ui, sans-serif;
+    font-feature-settings: "ss01", "cv11";
+    letter-spacing: -0.01em;
+    margin: 0;
+    min-height: 100dvh;
+  }
+
+  ::selection {
+    background: var(--color-moss);
+    color: var(--color-bg);
+  }
+
+  /* Focus ring per §14 */
+  :where(a, button, input, select, textarea, [tabindex]):focus-visible {
+    outline: 2px solid var(--color-moss);
+    outline-offset: 4px;
+    border-radius: 2px;
+  }
+
+  /* Hide cursor over interactive surfaces when custom cursor is on,
+     gracefully reverts on touch devices via @media query below. */
+  html.has-cursor,
+  html.has-cursor * {
+    cursor: none !important;
+  }
+
+  @media (pointer: coarse) {
+    html.has-cursor,
+    html.has-cursor * {
+      cursor: auto !important;
+    }
+  }
+
+  h1, h2, h3, h4 {
+    font-family: var(--font-display), serif;
+    letter-spacing: -0.04em;
+    margin: 0;
+  }
+
+  p { margin: 0; }
+
+  img, video, svg {
+    display: block;
+    max-width: 100%;
+    height: auto;
+  }
+}
+
+/* ============================================================
+   Utility classes
+   ============================================================ */
+
+@layer utilities {
+  .font-display { font-family: var(--font-display), serif; }
+  .font-pack    { font-family: var(--font-pack), "Arial Narrow", sans-serif; letter-spacing: -0.02em; }
+  .font-body    { font-family: var(--font-body), system-ui, sans-serif; }
+  .font-mono    { font-family: var(--font-mono), ui-monospace, monospace; letter-spacing: 0; }
+
+  .shell {
+    width: 100%;
+    max-width: var(--shell-max);
+    margin-inline: auto;
+    padding-inline: var(--gutter-x);
+  }
+
+  .grain {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.05;
+    mix-blend-mode: multiply;
+    background-image: url("/textures/noise.svg");
+  }
+
+  /* Drop-cap for editorial paragraphs */
+  .dropcap::first-letter {
+    font-family: var(--font-display), serif;
+    font-weight: 600;
+    font-size: 4.6em;
+    line-height: 0.85;
+    float: left;
+    margin: 0.05em 0.12em -0.15em 0;
+    color: var(--color-moss);
+  }
+
+  /* Glyph mask used by Reveal */
+  .reveal-mask {
+    display: inline-block;
+    overflow: hidden;
+    vertical-align: bottom;
+  }
+  .reveal-mask > span {
+    display: inline-block;
+    will-change: transform, opacity;
+  }
+}
+
+/* ============================================================
+   Keyframes — wind, bob, marquee, shimmer
+   ============================================================ */
+
+@keyframes ishayu-bob {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-6px); }
+}
+
+@keyframes ishayu-sway {
+  0%, 100% { transform: rotate(0deg); }
+  50%      { transform: rotate(2deg); }
+}
+
+@keyframes ishayu-shimmer {
+  0%   { background-position: -120% 0; }
+  100% { background-position: 220% 0; }
+}
+
+.ishayu-skeleton {
+  background: linear-gradient(
+    90deg,
+    color-mix(in oklab, var(--color-bg-alt) 80%, transparent) 0%,
+    color-mix(in oklab, var(--color-moss) 12%, var(--color-bg-alt)) 50%,
+    color-mix(in oklab, var(--color-bg-alt) 80%, transparent) 100%
+  );
+  background-size: 200% 100%;
+  animation: ishayu-shimmer 1.6s linear infinite;
+  border-radius: 8px;
+}
+
+.bob { animation: ishayu-bob 4s var(--ease-in-out-sine) infinite; }
+.sway { animation: ishayu-sway 5.5s var(--ease-in-out-sine) infinite; transform-origin: bottom center; }
+
+/* Lenis smooth-scroll required class */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+.lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
+.lenis.lenis-stopped { overflow: clip; }
+.lenis.lenis-smooth iframe { pointer-events: none; }
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
