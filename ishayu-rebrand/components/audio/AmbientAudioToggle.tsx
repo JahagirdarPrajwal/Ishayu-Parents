@@ -8,10 +8,10 @@ import { COPY } from "@/lib/voice";
 /**
  * AmbientAudioToggle — gentle meadow wind + crickets, off by default.
  *
- * Loads /audio/ambient.mp3 (a 60 s segment we extracted from the user's
- * long YouTube rip via scripts/build_ambient_audio.py) and loops it
- * through the Web Audio API. Looping the *decoded* AudioBuffer is gapless
- * by design — there's no MP3 decoder priming click between iterations.
+ * Loads /audio/ambient.mp3 (a pre-trimmed nature loop the brand supplied)
+ * and loops it through the Web Audio API. Looping the *decoded* AudioBuffer
+ * is gapless by design — there's no MP3 decoder priming click between
+ * iterations regardless of the clip length.
  *
  * - The AudioContext is only created on first toggle, so browser autoplay
  *   policies are respected.
