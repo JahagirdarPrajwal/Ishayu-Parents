@@ -23,21 +23,25 @@ import { COPY } from "@/lib/voice";
  */
 
 const AUDIO_URL = "/audio/ambient.mp3";
-// Master target gain when audio is on. We were at 0.3 which sounded fine on
-// laptop speakers but was inaudible on mobile. 0.85 gets us close to unity
-// without risking clipping on already-loud sources.
-const TARGET_GAIN = 0.85;
-// Floor for the scroll-driven fade — even deep in the page the ambient bed
-// stays present (dead-silent ambient feels broken on mobile).
-const SCROLL_FLOOR = 0.45;
-// How many viewport heights of scroll the fade spans. Larger = more gradual.
-const SCROLL_FADE_SPAN = 4;
+// Master target gain when audio is on. >1.0 amplifies above unity — safe
+// here because everything routes through a DynamicsCompressor which catches
+// the peaks. Mobile speakers need this; laptops won't notice the difference
+// because the compressor leaves nominal levels alone.
+const TARGET_GAIN = 1.5;
+// Floor for the scroll-driven fade. Even deep in the page the bed stays
+// present (full silence feels broken). At 0.25 × 1.5 = ~0.375 effective.
+const SCROLL_FLOOR = 0.25;
+// How many viewport heights of scroll the fade spans. Smaller = more
+// noticeable perceived fade. At span=2 the user clearly feels the bed
+// recede as they leave the hero, then it settles to the floor.
+const SCROLL_FADE_SPAN = 2;
 const FADE_IN_SEC = 1.2;
 const FADE_OUT_SEC = 0.6;
 
 type Engine = {
   ctx: AudioContext;
   master: GainNode;
+  compressor: DynamicsCompressorNode;
   source: AudioBufferSourceNode | null;
   buffer: AudioBuffer;
 };
@@ -63,23 +67,36 @@ async function startEngine(): Promise<Engine> {
       .webkitAudioContext;
   const ctx = new Ctx();
 
+  // Compressor catches transients before they hit the master gain so we
+  // can run TARGET_GAIN > 1.0 without distortion. Settings are mild — this
+  // is a "loudness saver" not a radio-style heavy crush.
+  const compressor = ctx.createDynamicsCompressor();
+  compressor.threshold.value = -18; // dB — start gently above this
+  compressor.knee.value = 18; // dB — wide soft knee
+  compressor.ratio.value = 4; // 4:1
+  compressor.attack.value = 0.003;
+  compressor.release.value = 0.25;
+
   const master = ctx.createGain();
   master.gain.value = 0;
+
+  // src → compressor → master → destination
+  compressor.connect(master);
   master.connect(ctx.destination);
 
   const buffer = await loadBuffer(ctx);
 
-  return { ctx, master, source: null, buffer };
+  return { ctx, master, compressor, source: null, buffer };
 }
 
 function attachSource(e: Engine) {
   // BufferSources are one-shot in Web Audio: every time we re-enable the
   // toggle we have to spin up a fresh AudioBufferSourceNode wired to the
-  // same buffer + same gain chain.
+  // same compressor + gain chain.
   const src = e.ctx.createBufferSource();
   src.buffer = e.buffer;
   src.loop = true;
-  src.connect(e.master);
+  src.connect(e.compressor);
   src.start();
   e.source = src;
 }
