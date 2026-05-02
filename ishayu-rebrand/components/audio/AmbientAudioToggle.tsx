@@ -28,13 +28,12 @@ const AUDIO_URL = "/audio/ambient.mp3";
 // the peaks. Mobile speakers need this; laptops won't notice the difference
 // because the compressor leaves nominal levels alone.
 const TARGET_GAIN = 1.5;
-// Floor for the scroll-driven fade. Even deep in the page the bed stays
-// present (full silence feels broken). At 0.25 × 1.5 = ~0.375 effective.
-const SCROLL_FLOOR = 0.25;
-// How many viewport heights of scroll the fade spans. Smaller = more
-// noticeable perceived fade. At span=2 the user clearly feels the bed
-// recede as they leave the hero, then it settles to the floor.
-const SCROLL_FADE_SPAN = 2;
+// Audio is "the meadow" — it lives with the hero. As soon as the user
+// scrolls off the landing screen the bed should fade away completely, the
+// same way leaving a field stops the sound of wind. Floor 0 = silence past
+// the hero. Span = 1 viewport = exactly the hero distance.
+const SCROLL_FLOOR = 0;
+const SCROLL_FADE_SPAN = 1;
 const FADE_IN_SEC = 1.2;
 const FADE_OUT_SEC = 0.6;
 
